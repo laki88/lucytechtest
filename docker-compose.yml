@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend/web-analyzer
+    ports:
+      - "8080:8080"
+    restart: always
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend/web_page_analyzer
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
