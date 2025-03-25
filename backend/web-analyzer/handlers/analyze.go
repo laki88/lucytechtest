@@ -1,21 +1,45 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
+	"regexp"
 
 	"web-analyzer/services"
+
+	"github.com/gin-gonic/gin"
 )
 
-func AnalyzeHandler(w http.ResponseWriter, r *http.Request) {
-	url := r.FormValue("url")
+type AnalyzeRequest struct {
+	URL string `json:"url"` // Maps the "url" key in JSON to this field
+}
+
+func AnalyzeHandler(c *gin.Context) {
+	var req AnalyzeRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+	url := req.URL
+
 	if url == "" {
-		http.Error(w, "URL parameter is required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "URL parameter is required"})
+		return
+	}
+	if !isValidURL(url) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL"})
 		return
 	}
 
 	go services.AnalyzePage(url)
 
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(map[string]string{"message": "URL submitted for analysis"})
+	c.JSON(http.StatusAccepted, gin.H{"message": "URL submitted for analysis"})
+}
+
+func isValidURL(url string) bool {
+	// Define a regex pattern for URL validation
+	const urlPattern = `^(https?://)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(/.*)?$`
+
+	re := regexp.MustCompile(urlPattern)
+	return re.MatchString(url)
 }

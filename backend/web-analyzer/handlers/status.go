@@ -1,25 +1,25 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"web-analyzer/services"
+
+	"github.com/gin-gonic/gin"
 )
 
-func StatusHandler(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.Query().Get("url")
+func StatusHandler(c *gin.Context) {
+	url := c.Query("url")
 	if url == "" {
-		http.Error(w, "URL parameter is required", http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "URL parameter is required"})
 		return
 	}
 
 	analysis, exists := services.GetAnalysis(url)
 	if !exists {
-		http.Error(w, "Analysis not found", http.StatusNotFound)
+		c.JSON(http.StatusNotFound, gin.H{"error": "Analysis not found"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(analysis)
+	c.JSON(http.StatusOK, analysis)
 }

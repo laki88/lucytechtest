@@ -1,15 +1,14 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
-
 	"web-analyzer/services"
+
+	"github.com/gin-gonic/gin"
 )
 
-func UrlsHandler(w http.ResponseWriter, r *http.Request) {
+func UrlsHandler(c *gin.Context) {
 	urls := services.GetSubmittedUrls()
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string][]string{"urls": urls})
+	c.JSON(http.StatusOK, gin.H{"urls": urls})
 }

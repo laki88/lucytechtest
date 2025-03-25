@@ -44,15 +44,9 @@ func main() {
 	r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(prometheusRegistry, promhttp.HandlerOpts{})))
 
 	// Define API routes
-	r.POST("/analyze", func(c *gin.Context) {
-		handlers.AnalyzeHandler(c.Writer, c.Request)
-	})
-	r.GET("/status", func(c *gin.Context) {
-		handlers.StatusHandler(c.Writer, c.Request)
-	})
-	r.GET("/urls", func(c *gin.Context) {
-		handlers.UrlsHandler(c.Writer, c.Request)
-	})
+	r.POST("/analyze", handlers.AnalyzeHandler)
+	r.GET("/status", handlers.StatusHandler)
+	r.GET("/urls", handlers.UrlsHandler)
 
 	// Enable CORS
 	corsMiddleware := cors.New(cors.Options{

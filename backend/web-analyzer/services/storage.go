@@ -3,7 +3,7 @@ package services
 import "web-analyzer/models"
 
 var analysisResults = make(map[string]models.AnalysisResult)
-var submittedUrls []string
+var submittedUrls = make(map[string]struct{})
 
 func StoreAnalysis(url string, result models.AnalysisResult) {
 	analysisResults[url] = result
@@ -15,9 +15,13 @@ func GetAnalysis(url string) (models.AnalysisResult, bool) {
 }
 
 func GetSubmittedUrls() []string {
-	return submittedUrls
+	urls := make([]string, 0, len(submittedUrls)) // Preallocate memory
+	for url := range submittedUrls {
+		urls = append(urls, url)
+	}
+	return urls
 }
 
 func AddSubmittedUrl(url string) {
-	submittedUrls = append(submittedUrls, url)
+	submittedUrls[url] = struct{}{}
 }
