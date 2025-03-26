@@ -8,6 +8,8 @@ import (
 	"web-analyzer/handlers"
 	"web-analyzer/models"
 	"web-analyzer/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 func TestStatusHandler_ValidURL(t *testing.T) {
@@ -17,8 +19,11 @@ func TestStatusHandler_ValidURL(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/status?url="+testURL, nil)
 	rr := httptest.NewRecorder()
 
+	router := gin.Default()
+	router.GET("/status", handlers.StatusHandler)
+
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		handlers.StatusHandler(w, r)
+		router.ServeHTTP(w, r)
 	})
 
 	handler.ServeHTTP(rr, req)
