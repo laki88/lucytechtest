@@ -17,15 +17,13 @@ import (
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-
-	// r := gin.Default() // Ensures logging and recovery middleware is enabled
-
-	// setupPprof(r)
+	slog.SetDefault(logger)
 
 	r := setupRouter()
 
 	pprof.Register(r)
 
+	logger.Info("Setting up Prometheus metrics")
 	// Prometheus Metrics
 	prometheusRegistry := prometheus.NewRegistry()
 	httpRequests := prometheus.NewCounterVec(
@@ -39,16 +37,9 @@ func main() {
 
 	r.Use(func(c *gin.Context) {
 		httpRequests.WithLabelValues(c.Request.Method, c.FullPath()).Inc()
+		logger.Info("Received request", "method", c.Request.Method, "endpoint", c.FullPath())
 		c.Next()
 	})
-
-	// Expose Prometheus metrics at /metrics
-	// r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(prometheusRegistry, promhttp.HandlerOpts{})))
-
-	// // Define API routes
-	// r.POST("/analyze", handlers.AnalyzeHandler)
-	// r.GET("/status", handlers.StatusHandler)
-	// r.GET("/urls", handlers.UrlsHandler)
 
 	// Enable CORS
 	corsMiddleware := cors.New(cors.Options{
@@ -69,7 +60,10 @@ func main() {
 
 func setupPprof(router *gin.Engine) {
 	go func() {
-		http.ListenAndServe("localhost:6060", nil)
+		err := http.ListenAndServe("localhost:6060", nil)
+		if err != nil {
+			slog.Error("pprof server failed", "error", err)
+		}
 	}()
 }
 

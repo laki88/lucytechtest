@@ -1,6 +1,9 @@
 package services
 
-import "web-analyzer/models"
+import (
+	"log/slog"
+	"web-analyzer/models"
+)
 
 var analysisResults = make(map[string]models.AnalysisResult)
 var submittedUrls = make(map[string]struct{})
@@ -24,4 +27,5 @@ func GetSubmittedUrls() []string {
 
 func AddSubmittedUrl(url string) {
 	submittedUrls[url] = struct{}{}
+	slog.Info("New URL added to submissions", "url", url)
 }

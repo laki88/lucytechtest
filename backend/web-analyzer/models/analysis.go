@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -40,7 +41,12 @@ func IsBrokenLink(url string) bool {
 		Timeout: 5 * time.Second,
 	}
 	resp, err := client.Head(url)
-	if err != nil || resp.StatusCode >= 400 {
+	if err != nil {
+		slog.Debug("Link check failed", "url", url, "error", err)
+		return true
+	}
+	if resp.StatusCode >= 400 {
+		slog.Debug("Broken link detected", "url", url, "status", resp.StatusCode)
 		return true
 	}
 	return false
