@@ -18,9 +18,11 @@ import (
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	r := gin.Default() // Ensures logging and recovery middleware is enabled
+	// r := gin.Default() // Ensures logging and recovery middleware is enabled
 
-	setupPprof(r)
+	// setupPprof(r)
+
+	r := setupRouter()
 
 	pprof.Register(r)
 
@@ -41,12 +43,12 @@ func main() {
 	})
 
 	// Expose Prometheus metrics at /metrics
-	r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(prometheusRegistry, promhttp.HandlerOpts{})))
+	// r.GET("/metrics", gin.WrapH(promhttp.HandlerFor(prometheusRegistry, promhttp.HandlerOpts{})))
 
-	// Define API routes
-	r.POST("/analyze", handlers.AnalyzeHandler)
-	r.GET("/status", handlers.StatusHandler)
-	r.GET("/urls", handlers.UrlsHandler)
+	// // Define API routes
+	// r.POST("/analyze", handlers.AnalyzeHandler)
+	// r.GET("/status", handlers.StatusHandler)
+	// r.GET("/urls", handlers.UrlsHandler)
 
 	// Enable CORS
 	corsMiddleware := cors.New(cors.Options{
@@ -69,4 +71,17 @@ func setupPprof(router *gin.Engine) {
 	go func() {
 		http.ListenAndServe("localhost:6060", nil)
 	}()
+}
+
+func setupRouter() *gin.Engine {
+	r := gin.Default()
+	setupPprof(r)
+
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	r.POST("/analyze", handlers.AnalyzeHandler)
+	r.GET("/status", handlers.StatusHandler)
+	r.GET("/urls", handlers.UrlsHandler)
+
+	return r
 }

@@ -35,7 +35,7 @@ var htmlVersions = map[string]string{
 	"-//W3C//DTD XHTML 1.1//EN":              "XHTML 1.1",
 }
 
-func isBrokenLink(url string) bool {
+func IsBrokenLink(url string) bool {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 	}
@@ -97,13 +97,13 @@ func AnalyzeHTML(doc *html.Node, baseURL string) AnalysisResult {
 						url := attr.Val
 						if strings.HasPrefix(url, "http") {
 							externalLinks++
-							if isBrokenLink(url) {
+							if IsBrokenLink(url) {
 								brokenLinks++
 							}
 						} else {
 							internalLinks++
 							fullURL := baseURL + url
-							if isBrokenLink(fullURL) {
+							if IsBrokenLink(fullURL) {
 								brokenLinks++
 							}
 						}

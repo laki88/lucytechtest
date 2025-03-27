@@ -73,7 +73,7 @@ export default function WebPageAnalyzer() {
 
   const fetchUrls = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/urls");
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/urls`);
       setUrls(response.data.urls || []);
       setBackendDown(false);
     } catch (error) {
@@ -91,7 +91,7 @@ export default function WebPageAnalyzer() {
     setCancelMessage(false);
     setAnalysisResult(null);
     try {
-      const response = await axios.post("http://localhost:8080/analyze", { url });
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/analyze`, { url });
       if (response.status === 202) {
         setSuccessMessage("Successfully submitted for analysis.");
         setShowSuccessMessage(true);
@@ -112,7 +112,7 @@ export default function WebPageAnalyzer() {
     setLoading(true);
     setErrorMessage("");
     try {
-      const response = await axios.get("http://localhost:8080/status", { 
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/status`, { 
         params: { url: fetchUrl || selectedUrl } 
       });
       if (response.data.Status === "Completed") {
@@ -201,7 +201,7 @@ export default function WebPageAnalyzer() {
                 onClick={handleWaitModalCancel}
                 className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
               >
-                Cancel
+                No
               </button>
             </div>
           </div>

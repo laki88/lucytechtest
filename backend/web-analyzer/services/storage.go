@@ -15,7 +15,7 @@ func GetAnalysis(url string) (models.AnalysisResult, bool) {
 }
 
 func GetSubmittedUrls() []string {
-	urls := make([]string, 0, len(submittedUrls)) // Preallocate memory
+	urls := make([]string, 0, len(submittedUrls))
 	for url := range submittedUrls {
 		urls = append(urls, url)
 	}

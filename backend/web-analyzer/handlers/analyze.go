@@ -10,7 +10,7 @@ import (
 )
 
 type AnalyzeRequest struct {
-	URL string `json:"url"` // Maps the "url" key in JSON to this field
+	URL string `json:"url"`
 }
 
 func AnalyzeHandler(c *gin.Context) {
