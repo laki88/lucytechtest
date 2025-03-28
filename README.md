@@ -42,6 +42,8 @@ Before running the project, ensure you have the following installed:
 web-analyzer/
 │── backend/web-analyzer
 │   │── handlers/
+│   │── models/
+│   │── services/
 │   │── main.go
 │   │── go.mod
 │   │── Dockerfile
@@ -60,6 +62,39 @@ web-analyzer/
 
 ---
 
+## File and Folder Explanation
+
+### Backend (backend/web-analyzer)
+
+- handlers/ - Contains HTTP request handlers responsible for processing API requests.
+
+- models/ - Defines data structures and database models (if applicable).
+
+- services/ - Contains business logic and reusable service functions.
+
+- main.go - Entry point of the backend application, sets up the server and routes.
+
+- go.mod - Go module file for dependency management.
+
+- Dockerfile - Configuration for building the backend Docker container.
+
+### Frontend (frontend/web_page_analyzer)
+
+- src/ - Contains React components, pages, and UI logic.
+
+- package.json - Manages frontend dependencies and scripts.
+
+- Dockerfile - Configuration for building the frontend Docker container.
+
+### Root Directory
+
+- docker-compose.yml - Defines multi-container Docker setup to run the application.
+
+- README.md - Documentation for setting up and running the project.
+
+- .gitignore - Specifies files and directories to be ignored by Git.
+
+---
 ## How to Build and Run
 
 ### Building and Running Backend
@@ -92,7 +127,11 @@ web-analyzer/
    ```sh
    npm start
    ```
-4. The frontend should now be accessible at `http://localhost:3000`.
+4. Create .env file in the same directory and copy & paste below content to the .env file
+```
+REACT_APP_API_BASE_URL=http://localhost:8080
+```
+5. The frontend should now be accessible at `http://localhost:3000`.
 
 ---
 
@@ -103,8 +142,12 @@ web-analyzer/
    ```sh
    docker-compose up --build
    ```
-3. Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8080`.
-4. To stop the services:
+3. Create .env file in the ./frontend/web_page_analyzer directory and copy & paste below content to the .env file
+```
+REACT_APP_API_BASE_URL=http://localhost:8080
+```
+4. Access the frontend at `http://localhost:3000` and the backend at `http://localhost:8080`.
+5. To stop the services:
    ```sh
    docker-compose down
    ```
